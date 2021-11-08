@@ -96,11 +96,21 @@ public class ItemController {
 
     @GetMapping(value = {"/admin/items", "/admin/items/{page}"})
     public String itemManage(ItemSearchDto itemSearchDto, @PathVariable("page") Optional<Integer> page, Model model) {
-        Pageable pageable = PageRequest.of(page.isPresent() ? page.get() : 0, 3);
+//        Pageable pageable = PageRequest.of( !page.isPresent() ? 0 : (page.get() -1), 4);
+        Pageable pageable = PageRequest.of( page.isPresent() ? (page.get() -1) : 0 , 2);
         Page<Item> items = itemService.getAdminItemPage(itemSearchDto, pageable);
+
+        log.info("pageable.getPageNumber={}", pageable.getPageNumber());
+        log.info("pageable.getPageSize={}", pageable.getPageSize());
+        log.info("pageable.getOffset={}", pageable.getOffset());
+        log.info("totalPage={}", items.getTotalPages());
+        log.info("totalElements={}", items.getTotalElements());
+        log.info("number={}", items.getNumber());
+        log.info("content={}", items.getContent());
+        log.info("count={}", items.stream().count());
         model.addAttribute("items", items);
         model.addAttribute("itemSearchDto", itemSearchDto);
-        model.addAttribute("maxPage", 5);
+        model.addAttribute("maxPage", 10);
         return "item/itemMng";
     }
 
